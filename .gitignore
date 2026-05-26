@@ -1,0 +1,16 @@
+.env
+__pycache__/
+*.pyc
+.DS_Store
+venv/
+.venv/
+.tmp/
+
+# Interne Arbeits-Dateien – nicht Teil der Abgabe
+.claude/
+CLAUDE.md
+brand_identity.md
+remember.md
+
+# Zwischen-Dateien
+output/leads_saleshax_raw.csv

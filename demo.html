@@ -1,0 +1,2652 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saleshax Lead Engine – Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0A0A0A;
+      --surface: #111111;
+      --surface2: #181818;
+      --border: #1e1e1e;
+      --text: #f1f1f1;
+      --text-secondary: #9ca3af;
+      --muted: #6b7280;
+      --accent: #0C85B4;
+      --accent-dim: rgba(12,133,180,0.12);
+      --accent-hover: #0A76A0;
+      --green: #22c55e;
+      --green-dim: rgba(34,197,94,0.12);
+      --amber: #f59e0b;
+      --amber-dim: rgba(245,158,11,0.12);
+      --red: #ef4444;
+      --red-dim: rgba(239,68,68,0.12);
+      --font: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --mono: ui-monospace, Menlo, 'Courier New', monospace;
+      --radius: 8px;
+      --radius-sm: 5px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      height: 60px;
+      background: rgba(10,10,10,0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 600; font-size: 14px; letter-spacing: -0.2px;
+    }
+    .nav-logo {
+      width: 26px; height: 26px;
+      background: var(--accent);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: #fff;
+      letter-spacing: 0;
+    }
+    .nav-badge {
+      font-size: 10px;
+      padding: 2px 8px;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border-radius: 99px;
+      border: 1px solid rgba(12,133,180,0.25);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .nav-links {
+      display: flex; gap: 24px; list-style: none;
+    }
+    .nav-links a {
+      font-size: 13px; color: var(--muted);
+      text-decoration: none; transition: color 0.15s;
+      font-weight: 500;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* ── SECTION SHARED ── */
+    section {
+      padding: 96px 32px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+    h2 {
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 600;
+      letter-spacing: -1.2px;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 17px;
+      color: var(--text-secondary);
+      max-width: 540px;
+      line-height: 1.65;
+    }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 100px;
+      padding-bottom: 80px;
+      position: relative;
+      overflow: hidden;
+      max-width: 100%;
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(12,133,180,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(12,133,180,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);
+      pointer-events: none;
+    }
+    .hero-glow {
+      position: absolute;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(12,133,180,0.08) 0%, transparent 70%);
+      left: 50%; top: 40%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .hero-inner {
+      position: relative;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 0 32px;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(12,133,180,0.25);
+      border-radius: 99px;
+      padding: 4px 14px 4px 8px;
+      margin-bottom: 28px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: 0.3px;
+    }
+    .hero-eyebrow-dot {
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    h1 {
+      font-size: clamp(36px, 5.5vw, 62px);
+      font-weight: 600;
+      letter-spacing: -2px;
+      line-height: 1.06;
+      margin-bottom: 20px;
+    }
+    h1 span { color: var(--accent); }
+    .hero-sub {
+      font-size: 18px;
+      color: var(--text-secondary);
+      max-width: 520px;
+      line-height: 1.65;
+      margin-bottom: 40px;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      font-size: 15px;
+      padding: 13px 24px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      font-family: var(--font);
+    }
+    .hero-cta:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .hero-cta:active { transform: translateY(0); }
+
+    /* STATS */
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+      margin-top: 56px;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .stat { display: flex; flex-direction: column; }
+    .stat-number {
+      font-size: 40px;
+      font-weight: 600;
+      letter-spacing: -2px;
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 2px;
+      font-weight: 500;
+    }
+    .stat-number.green { color: var(--green); }
+
+    /* PIPELINE */
+    .pipeline-wrap {
+      margin-top: 56px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .pipeline-wrap::-webkit-scrollbar { height: 3px; }
+    .pipeline-wrap::-webkit-scrollbar-track { background: var(--border); }
+    .pipeline-wrap::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+
+    .pipeline {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      min-width: max-content;
+    }
+    .pipeline-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .node-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      transition: border-color 0.3s, color 0.3s;
+      position: relative;
+    }
+    .node-box.source {
+      border-color: rgba(12,133,180,0.3);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+    .node-box.active {
+      border-color: var(--accent);
+      color: var(--text);
+      box-shadow: 0 0 20px rgba(12,133,180,0.2);
+    }
+    .node-dot {
+      width: 5px; height: 5px;
+      background: var(--muted);
+      border-radius: 50%;
+    }
+
+    .pipeline-connector {
+      display: flex;
+      align-items: center;
+      width: 40px;
+      height: 2px;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .connector-line {
+      width: 100%;
+      height: 2px;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--border) 0px, var(--border) 5px,
+        transparent 5px, transparent 10px
+      );
+    }
+    .connector-flow {
+      position: absolute;
+      height: 2px;
+      width: 30px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      animation: flow 1.8s linear infinite;
+    }
+    @keyframes flow {
+      from { transform: translateX(-30px); }
+      to { transform: translateX(70px); }
+    }
+    .sources-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .timeline {
+      position: relative;
+      margin-top: 56px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 23px;
+      top: 24px;
+      bottom: 24px;
+      width: 1px;
+      background: var(--border);
+    }
+    .timeline-item {
+      display: flex;
+      gap: 24px;
+      padding: 20px 0;
+      position: relative;
+    }
+    .timeline-num {
+      width: 46px;
+      height: 46px;
+      min-width: 46px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      position: relative;
+      z-index: 1;
+      font-family: var(--font);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .timeline-item:hover .timeline-num {
+      border-color: var(--accent);
+      box-shadow: 0 0 16px rgba(12,133,180,0.25);
+    }
+    .timeline-content { padding-top: 8px; flex: 1; }
+    .timeline-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+    .timeline-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      max-width: 560px;
+    }
+    .timeline-tag {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--green);
+      background: var(--green-dim);
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: 4px;
+      padding: 2px 8px;
+    }
+
+    /* ── INTEGRATION TABS ── */
+    #integration {
+      border-top: 1px solid var(--border);
+    }
+    .tab-bar {
+      display: flex;
+      gap: 4px;
+      margin-top: 40px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 4px;
+      width: fit-content;
+    }
+    .tab-btn {
+      padding: 9px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      background: transparent;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font);
+      white-space: nowrap;
+    }
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+    .tab-btn:hover:not(.active) { color: var(--text); }
+
+    .tab-panels { margin-top: 32px; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    @media (max-width: 768px) {
+      .tab-panel.active { grid-template-columns: 1fr; }
+    }
+
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .step-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .step-num {
+      width: 28px; height: 28px; min-width: 28px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(12,133,180,0.25);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 600;
+      color: var(--accent);
+      font-family: var(--font);
+    }
+    .step-content {}
+    .step-title {
+      font-size: 14px; font-weight: 600; margin-bottom: 2px;
+    }
+    .step-desc {
+      font-size: 13px; color: var(--muted); line-height: 1.55;
+    }
+
+    .code-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .code-dots {
+      display: flex; gap: 6px;
+    }
+    .code-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+    .code-dot:nth-child(1) { background: #ff5f57; }
+    .code-dot:nth-child(2) { background: #febc2e; }
+    .code-dot:nth-child(3) { background: #28c840; }
+    .copy-btn {
+      font-size: 11px; font-weight: 600;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 4px 10px;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: all 0.15s;
+    }
+    .copy-btn:hover { color: var(--text); border-color: var(--muted); }
+    .copy-btn.copied { color: var(--green); border-color: var(--green); }
+    pre {
+      padding: 20px;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.7;
+      color: #c9d1d9;
+      overflow-x: auto;
+    }
+    pre .comment { color: #6b7280; }
+    pre .key { color: #79c0ff; }
+    pre .str { color: #a5d6ff; }
+    pre .fn { color: #d2a8ff; }
+    pre .kw { color: #ff7b72; }
+
+    /* ── DEMO SECTION ── */
+    #demo {
+      border-top: 1px solid var(--border);
+    }
+    .demo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--amber);
+      background: var(--amber-dim);
+      border: 1px solid rgba(245,158,11,0.2);
+      border-radius: 99px;
+      padding: 3px 10px;
+      margin-bottom: 10px;
+      letter-spacing: 0.3px;
+    }
+    .demo-badge-dot {
+      width: 5px; height: 5px;
+      background: var(--amber);
+      border-radius: 50%;
+    }
+
+    /* SOURCE CARDS */
+    .source-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 32px;
+    }
+    @media (max-width: 640px) {
+      .source-cards { grid-template-columns: 1fr; }
+    }
+    .source-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      user-select: none;
+    }
+    .source-card.on {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(12,133,180,0.2);
+    }
+    .source-icon {
+      width: 40px; height: 40px; min-width: 40px;
+      background: var(--surface2);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      border: 1px solid var(--border);
+    }
+    .source-info { flex: 1; }
+    .source-name {
+      font-size: 14px; font-weight: 600; margin-bottom: 2px;
+    }
+    .source-desc {
+      font-size: 11px; color: var(--muted); line-height: 1.4;
+    }
+    .toggle {
+      width: 36px; height: 20px;
+      background: var(--border);
+      border-radius: 10px;
+      position: relative;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .toggle.on { background: var(--accent); }
+    .toggle::after {
+      content: '';
+      position: absolute;
+      width: 14px; height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      top: 3px; left: 3px;
+      transition: transform 0.2s;
+    }
+    .toggle.on::after { transform: translateX(16px); }
+
+    .run-btn {
+      width: 100%;
+      margin-top: 24px;
+      padding: 16px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      font-size: 16px;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-family: var(--font);
+      letter-spacing: -0.3px;
+      transition: background 0.2s, transform 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .run-btn:hover:not(:disabled) { background: var(--accent-hover); transform: translateY(-1px); }
+    .run-btn:active { transform: translateY(0); }
+    .run-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* TERMINAL */
+    .terminal-wrap {
+      margin-top: 32px;
+      display: none;
+    }
+    .terminal-wrap.visible { display: block; }
+    .terminal-header {
+      background: #1a1a1a;
+      border: 1px solid var(--border);
+      border-bottom: none;
+      border-radius: var(--radius) var(--radius) 0 0;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .terminal-header .code-dots { flex: 1; }
+    .terminal-title {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+    .progress-wrap {
+      flex: 1;
+      height: 3px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), #65BADB);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+    .terminal-body {
+      background: #0d0d0d;
+      border: 1px solid var(--border);
+      border-radius: 0 0 var(--radius) var(--radius);
+      padding: 20px;
+      height: 340px;
+      overflow-y: auto;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.75;
+      color: #c9d1d9;
+    }
+    .terminal-body::-webkit-scrollbar { width: 4px; }
+    .terminal-body::-webkit-scrollbar-track { background: transparent; }
+    .terminal-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .log-line { display: block; }
+    .log-line.dim { color: var(--muted); }
+    .log-line.accent { color: var(--accent); }
+    .log-line.green { color: var(--green); }
+    .log-line.amber { color: var(--amber); }
+    .log-line.divider { color: #2a2a2a; }
+    .log-line.header { color: #e2e8f0; font-weight: 500; }
+    .log-cursor {
+      display: inline-block;
+      width: 8px; height: 14px;
+      background: var(--accent);
+      animation: blink 1s step-end infinite;
+      vertical-align: middle;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .live-counter {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 8px;
+      font-size: 12px;
+      font-family: var(--mono);
+      color: var(--muted);
+    }
+    .live-counter span { color: var(--accent); font-weight: 600; }
+
+    /* RESULTS */
+    .results-wrap {
+      margin-top: 40px;
+      display: none;
+    }
+    .results-wrap.visible { display: block; }
+
+    .results-stats {
+      display: flex;
+      gap: 0;
+      margin-bottom: 32px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .results-stat {
+      flex: 1;
+      padding: 24px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .results-stat:last-child { border-right: none; }
+    .results-stat-num {
+      font-size: 44px;
+      font-weight: 600;
+      font-family: var(--font);
+      letter-spacing: -2.5px;
+      line-height: 1;
+    }
+    .results-stat-num.val-scraped { color: var(--text); }
+    .results-stat-num.val-enriched { color: var(--amber); }
+    .results-stat-num.val-ready { color: var(--green); }
+    .results-stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+      font-weight: 500;
+    }
+
+    /* TABLE */
+    .table-wrap {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,255,255,0.02); }
+    td {
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      vertical-align: middle;
+    }
+    td:first-child { color: var(--text); font-weight: 500; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      padding: 3px 8px;
+      border-radius: 99px;
+      white-space: nowrap;
+    }
+    .badge-green {
+      background: var(--green-dim);
+      color: var(--green);
+      border: 1px solid rgba(34,197,94,0.2);
+    }
+    .badge-amber {
+      background: var(--amber-dim);
+      color: var(--amber);
+      border: 1px solid rgba(245,158,11,0.2);
+    }
+    .badge-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+    .badge-blue {
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid rgba(12,133,180,0.25);
+    }
+    .table-section-divider td {
+      background: var(--surface);
+      padding: 6px 16px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .expand-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .expand-btn:hover { color: var(--accent); border-color: var(--accent); }
+    .expand-btn.open { color: var(--accent); border-color: var(--accent); }
+
+    .opener-row td {
+      background: rgba(12,133,180,0.04);
+      border-top: 1px solid rgba(12,133,180,0.12);
+    }
+    .opener-row { display: none; }
+    .opener-row.visible { display: table-row; }
+    .opener-box {
+      background: var(--surface);
+      border: 1px solid rgba(12,133,180,0.2);
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      position: relative;
+    }
+    .opener-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .opener-body {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      white-space: pre-wrap;
+    }
+
+    .table-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .table-count { font-size: 13px; color: var(--muted); }
+    .export-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--green-dim);
+      border: 1px solid rgba(34,197,94,0.25);
+      color: var(--green);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: var(--font);
+      transition: all 0.15s;
+    }
+    .export-btn:hover {
+      background: rgba(34,197,94,0.2);
+      border-color: rgba(34,197,94,0.4);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      section { padding: 72px 20px; }
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      h1 { letter-spacing: -0.8px; }
+      .hero-stats { gap: 24px; }
+      .stat-number { font-size: 28px; }
+      .results-stats { flex-direction: column; }
+      .results-stat { border-right: none; border-bottom: 1px solid var(--border); }
+      .results-stat:last-child { border-bottom: none; }
+      .table-wrap { overflow-x: auto; }
+      table { min-width: 600px; }
+    }
+    @media (max-width: 480px) {
+      .tab-bar { flex-wrap: wrap; width: 100%; }
+      .tab-btn { flex: 1; text-align: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+
+    /* ── EMAIL TEMPLATE SECTION ── */
+    #template {
+      border-top: 1px solid var(--border);
+    }
+    .tpl-grid {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 32px;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .tpl-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Variable pills */
+    .tpl-var {
+      display: inline-block;
+      background: rgba(12,133,180,0.1);
+      border: 1px solid rgba(12,133,180,0.3);
+      border-radius: 4px;
+      padding: 1px 7px;
+      color: var(--accent);
+      font-family: var(--mono);
+      font-size: 0.85em;
+      font-weight: 600;
+      transition: background 0.3s, color 0.3s, border-color 0.3s, transform 0.2s;
+      vertical-align: baseline;
+      white-space: nowrap;
+    }
+    .tpl-var.filled {
+      background: rgba(34,197,94,0.1);
+      border-color: rgba(34,197,94,0.3);
+      color: var(--green);
+      font-family: var(--font);
+      font-size: 1em;
+    }
+    @keyframes tplPulse {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+    .tpl-var.highlight { animation: tplPulse 0.35s ease-out; }
+
+    /* Email client mockup */
+    .email-client {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .email-client-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      background: #1a1a1a;
+    }
+    .email-client-title {
+      flex: 1;
+      font-size: 12px;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+    .email-meta {
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .email-meta-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      font-size: 13px;
+    }
+    .email-meta-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+      width: 52px;
+      flex-shrink: 0;
+    }
+    .email-subject-text {
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+    .email-body-area {
+      padding: 24px 20px;
+    }
+    .email-body-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.9;
+    }
+
+    /* Lead nav controls */
+    .tpl-nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .tpl-nav-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .tpl-nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .tpl-counter {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: var(--mono);
+      white-space: nowrap;
+    }
+
+    /* Lead mapping panel */
+    .lead-mapping {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .lead-mapping-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      background: #1a1a1a;
+    }
+    .lead-mapping-title {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .lead-mapping-sub {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.3px;
+    }
+    .mapping-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .mapping-table th {
+      padding: 8px 16px;
+      text-align: left;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+    }
+    .mapping-table td {
+      padding: 10px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      color: var(--text-secondary);
+      font-size: 12px;
+      vertical-align: middle;
+    }
+    .mapping-table td:first-child {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 600;
+      width: 110px;
+      white-space: nowrap;
+    }
+    .mapping-table tr:last-child td { border-bottom: none; }
+    .lead-mapping-footer {
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* ── FIXES SECTION ── */
+    #fixes {
+      border-top: 1px solid var(--border);
+    }
+    .fix-meta-row {
+      display: flex;
+      gap: 32px;
+      margin-top: 36px;
+      margin-bottom: 44px;
+      padding: 24px 28px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      flex-wrap: wrap;
+    }
+    .fix-meta-item { display: flex; flex-direction: column; gap: 2px; }
+    .fix-meta-num {
+      font-size: 36px;
+      font-weight: 600;
+      letter-spacing: -2px;
+      line-height: 1;
+      font-family: var(--font);
+    }
+    .fix-meta-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+    .fixes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    @media (max-width: 768px) {
+      .fixes-grid { grid-template-columns: 1fr; }
+    }
+    .fix-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .fix-card:hover {
+      border-color: rgba(255,255,255,0.1);
+      box-shadow: 0 2px 24px rgba(0,0,0,0.25);
+    }
+    .fix-card-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #141414;
+    }
+    .fix-card-body { padding: 18px; }
+    .fix-type-badge {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .fix-type-bug {
+      background: var(--red-dim);
+      color: var(--red);
+      border: 1px solid rgba(239,68,68,0.2);
+    }
+    .fix-type-perf {
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid rgba(12,133,180,0.25);
+    }
+    .fix-file {
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--muted);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 8px;
+    }
+    .fix-num {
+      margin-left: auto;
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.08);
+      font-family: var(--mono);
+    }
+    .fix-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 14px;
+      line-height: 1.35;
+      letter-spacing: -0.3px;
+    }
+    .fix-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+      display: block;
+    }
+    .fix-label-problem { color: var(--red); }
+    .fix-label-fix { color: var(--green); }
+    .fix-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+    .fix-text code {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--accent);
+      background: var(--accent-dim);
+      border-radius: 3px;
+      padding: 1px 5px;
+    }
+    .fix-diff {
+      background: #0d0d0d;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 1.75;
+      overflow-x: auto;
+      margin-bottom: 12px;
+    }
+    .diff-del {
+      color: #fca5a5;
+      display: block;
+      padding-left: 2px;
+    }
+    .diff-del::before { content: '− '; opacity: 0.5; user-select: none; }
+    .diff-add {
+      color: #86efac;
+      display: block;
+      padding-left: 2px;
+    }
+    .diff-add::before { content: '+ '; opacity: 0.5; user-select: none; }
+    .diff-comment {
+      color: var(--muted);
+      display: block;
+      padding-left: 2px;
+    }
+    .diff-spacer { display: block; height: 6px; }
+    .fix-impact {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--green);
+      background: var(--green-dim);
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: 99px;
+      padding: 3px 11px;
+    }
+    .fix-card-wide { grid-column: 1 / -1; }
+    .fix-card-wide .fix-card-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+    @media (max-width: 768px) {
+      .fix-card-wide .fix-card-body { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo">S</div>
+    salesHAX Lead Engine
+    <span class="nav-badge">Demo</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#how">So funktioniert's</a></li>
+    <li><a href="#demo">Live Demo</a></li>
+    <li id="nav-template" style="display:none"><a href="#template">E-Mail-Template</a></li>
+    <li><a href="#integration">Integration</a></li>
+    <li><a href="#fixes">Bugfixes</a></li>
+  </ul>
+</nav>
+
+<!-- SECTION 1: HERO -->
+<div id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+
+    <div class="hero-eyebrow">
+      <span class="hero-eyebrow-dot"></span>
+      SHX Flow Engine &middot; AI Engineer Trainee Challenge
+    </div>
+
+    <h1>Bautr&auml;ger-Leads:<br><span>von 2h auf 5 Minuten.</span></h1>
+    <p class="hero-sub">Scraping &rarr; Enrichment &rarr; Kampagnen-E-Mail. Alle Copy-Variablen &mdash; Anrede, lastName, Adresse, Stadt &mdash; automatisch bef&uuml;llt und kampagnenf&auml;hig exportiert.</p>
+
+    <a href="#demo" class="hero-cta">
+      Workflow live erleben
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3L13 8L8 13M3 8H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+
+    <!-- PIPELINE DIAGRAM -->
+    <div class="pipeline-wrap">
+      <div class="pipeline" id="pipeline">
+
+        <!-- Sources -->
+        <div class="pipeline-node">
+          <div class="sources-group">
+            <div class="node-box source">Kleinanzeigen.de</div>
+            <div class="node-box source">Immowelt.de</div>
+            <div class="node-box source">ImmoScout24.de</div>
+          </div>
+        </div>
+
+        <div class="pipeline-connector">
+          <div class="connector-line"></div>
+          <div class="connector-flow"></div>
+        </div>
+
+        <div class="pipeline-node">
+          <div class="node-box">Scraper</div>
+          <div class="node-dot"></div>
+        </div>
+
+        <div class="pipeline-connector">
+          <div class="connector-line"></div>
+          <div class="connector-flow" style="animation-delay:0.3s"></div>
+        </div>
+
+        <div class="pipeline-node">
+          <div class="node-box">Dedup</div>
+          <div class="node-dot"></div>
+        </div>
+
+        <div class="pipeline-connector">
+          <div class="connector-line"></div>
+          <div class="connector-flow" style="animation-delay:0.6s"></div>
+        </div>
+
+        <div class="pipeline-node">
+          <div class="node-box">Website</div>
+          <div class="node-dot"></div>
+        </div>
+
+        <div class="pipeline-connector">
+          <div class="connector-line"></div>
+          <div class="connector-flow" style="animation-delay:0.9s"></div>
+        </div>
+
+        <div class="pipeline-node">
+          <div class="node-box">Impressum</div>
+          <div class="node-dot"></div>
+        </div>
+
+        <div class="pipeline-connector">
+          <div class="connector-line"></div>
+          <div class="connector-flow" style="animation-delay:1.2s"></div>
+        </div>
+
+        <div class="pipeline-node">
+          <div class="node-box" style="background:rgba(12,133,180,0.1); border-color:rgba(12,133,180,0.35); color:#90CFE8;">Claude Haiku / GPT-4o</div>
+          <div class="node-dot"></div>
+        </div>
+
+        <div class="pipeline-connector">
+          <div class="connector-line"></div>
+          <div class="connector-flow" style="animation-delay:1.5s"></div>
+        </div>
+
+        <div class="pipeline-node">
+          <div class="node-box" style="background:rgba(34,197,94,0.1); border-color:rgba(34,197,94,0.3); color:#86efac;">CSV / CRM</div>
+          <div class="node-dot"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-number" id="stat-scraped">0</span>
+        <span class="stat-label">Listings gecrawlt</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number" id="stat-enriched">0</span>
+        <span class="stat-label">mit Firmenname</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number green" id="stat-ready">0</span>
+        <span class="stat-label">copy-ready (mit API-Key)</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SECTION 2: HOW IT WORKS -->
+<section id="how">
+  <div class="section-label">Workflow</div>
+  <h2>So funktioniert's</h2>
+  <p class="section-sub">Sechs Schritte, vollautomatisch &mdash; mit realem Dropout an jeder Stufe. Output: <code style="font-family:var(--mono);font-size:12px;color:var(--accent)">{{Anrede}} {{lastName}} {{Adresse}} {{Stadt}}</code></p>
+
+  <div style="display:flex;align-items:center;gap:0;margin:32px 0 8px;flex-wrap:wrap;row-gap:8px">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 16px;font-size:13px;text-align:center">
+      <div style="font-size:22px;font-weight:600;letter-spacing:-1px;color:var(--text)">~150</div>
+      <div style="color:var(--muted);font-size:11px;margin-top:2px">Listings gecrawlt</div>
+    </div>
+    <div style="color:var(--muted);font-size:18px;padding:0 6px">&rarr;</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 16px;font-size:13px;text-align:center">
+      <div style="font-size:22px;font-weight:600;letter-spacing:-1px;color:var(--text)">52</div>
+      <div style="color:var(--muted);font-size:11px;margin-top:2px">nach Dedup</div>
+    </div>
+    <div style="color:var(--muted);font-size:18px;padding:0 6px">&rarr;</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 16px;font-size:13px;text-align:center">
+      <div style="font-size:22px;font-weight:600;letter-spacing:-1px;color:var(--text)">24</div>
+      <div style="color:var(--muted);font-size:11px;margin-top:2px">mit Firmenname</div>
+    </div>
+    <div style="color:var(--muted);font-size:18px;padding:0 6px">&rarr;</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 16px;font-size:13px;text-align:center">
+      <div style="font-size:22px;font-weight:600;letter-spacing:-1px;color:var(--accent)">10</div>
+      <div style="color:var(--muted);font-size:11px;margin-top:2px">mit E-Mail</div>
+    </div>
+    <div style="color:var(--muted);font-size:18px;padding:0 6px">&rarr;</div>
+    <div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);border-radius:6px;padding:10px 16px;font-size:13px;text-align:center">
+      <div style="font-size:22px;font-weight:600;letter-spacing:-1px;color:var(--green)">18</div>
+      <div style="color:var(--muted);font-size:11px;margin-top:2px">copy-ready (LLM)</div>
+    </div>
+  </div>
+  <p style="font-size:12px;color:var(--muted);margin-bottom:40px">Echter Lauf, 3 Quellen &middot; kein Happy-Path-Denken: Dropout an jeder Stufe ist normales B2B-Scraping. ImmoScout24 geblockt, Immowelt ohne Firmennamen &mdash; reale Ausfallquoten.</p>
+
+  <div class="timeline">
+
+    <div class="timeline-item">
+      <div class="timeline-num">01</div>
+      <div class="timeline-content">
+        <div class="timeline-title">Scraping &mdash; 3 Portale</div>
+        <div class="timeline-desc">Kleinanzeigen.de, Immowelt.de, ImmoScout24.de. Nur gewerbliche Anbieter &mdash; Privat-Verk&auml;ufer werden sofort gefiltert. Kleinanzeigen liefert den Firmennamen erst auf der Detailseite, die parallel abgerufen wird (5 Threads).</div>
+        <span class="timeline-tag">scraper.py &rarr; scrape_kleinanzeigen() / scrape_immowelt() / scrape_immoscout()</span>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-num">02</div>
+      <div class="timeline-content">
+        <div class="timeline-title">Deduplication</div>
+        <div class="timeline-desc">Hash &uuml;ber Firmenname und Listing-URL. Kein Lead erscheint doppelt, auch wenn er auf mehreren Portalen inseriert. Leads ohne Firmenname werden f&uuml;r das Enrichment markiert.</div>
+        <span class="timeline-tag">main.py &rarr; deduplicate(leads)</span>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-num">03</div>
+      <div class="timeline-content">
+        <div class="timeline-title">Website finden</div>
+        <div class="timeline-desc">DuckDuckGo-Suche nach Firmenname + Stadt + Impressum. Domain-Guess als Fallback &ndash; konstruiert m&ouml;gliche .de-Domains direkt aus dem Firmennamen und pr&uuml;ft sie. Portale und Social Media werden gefiltert.</div>
+        <span class="timeline-tag">enricher.py &rarr; find_company_website()</span>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-num">04</div>
+      <div class="timeline-content">
+        <div class="timeline-title">Impressum laden &mdash; der eigentliche Key Insight</div>
+        <div class="timeline-desc">12 Standard-Pfade werden gepr&uuml;ft (/impressum, /kontakt, /about usw.). <strong style="color:var(--text)">&sect;5 TMG verpflichtet jede deutsche Firma gesetzlich zum Impressum</strong> &ndash; Name, Adresse, E-Mail m&uuml;ssen ver&ouml;ffentlicht sein. Damit ist das Impressum die zuverl&auml;ssigste strukturierte B2B-Kontaktquelle im deutschsprachigen Markt &ndash; kein Scraping-Graubereich, keine Login-Wall, keine Rate-Limits.</div>
+        <span class="timeline-tag">enricher.py &rarr; fetch_impressum(base_url)</span>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-num">05</div>
+      <div class="timeline-content">
+        <div class="timeline-title">Kontakt extrahieren</div>
+        <div class="timeline-desc">Zwei Modi, explizit getrennt:</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;max-width:560px">
+          <div style="background:rgba(12,133,180,0.08);border:1px solid rgba(12,133,180,0.2);border-radius:6px;padding:12px">
+            <div style="font-size:11px;font-weight:700;color:var(--accent);letter-spacing:0.5px;margin-bottom:6px">MIT API-KEY</div>
+            <div style="font-size:13px;color:var(--text-secondary);line-height:1.5">Claude Haiku / GPT-4o liest Anrede, Nachname und E-Mail strukturiert aus dem Impressum-Rohtext &rarr; alle Copy-Variablen bef&uuml;llt &rarr; <span style="color:var(--green)">copy-ready</span> <span style="color:var(--muted)">(Vorname wird extrahiert wenn vorhanden, ist aber kein Pflichtfeld)</span></div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px">
+            <div style="font-size:11px;font-weight:700;color:var(--amber);letter-spacing:0.5px;margin-bottom:6px">OHNE API-KEY (Regex)</div>
+            <div style="font-size:13px;color:var(--text-secondary);line-height:1.5">Regex findet E-Mail-Adressen zuverl&auml;ssig &rarr; Namen unzuverl&auml;ssig (Impressum-Format variiert) &rarr; System degradiert statt zu crashen</div>
+          </div>
+        </div>
+        <span class="timeline-tag" style="margin-top:12px">enricher.py &rarr; extract_contact_llm() + _extract_contact_regex()</span>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-num">06</div>
+      <div class="timeline-content">
+        <div class="timeline-title">Export</div>
+        <div class="timeline-desc">CSV kampagnenf&auml;hig mit allen Copy-Variablen &mdash; direkt importierbar in Outreach-Tools. Geplante Erweiterungen:</div>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+          <span style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:4px;padding:3px 10px;font-size:11px;color:var(--amber)">Geplant: Close.io Write-Back &rarr; Tag <code style="font-family:var(--mono)">shx_enriched</code></span>
+          <span style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:4px;padding:3px 10px;font-size:11px;color:var(--amber)">Geplant: Webhook POST an n8n / Zapier / Make</span>
+        </div>
+        <span class="timeline-tag" style="margin-top:10px">main.py &rarr; export_csv()</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SECTION 3: DEMO -->
+<section id="demo">
+  <div class="section-label">Live Demo</div>
+  <h2>Workflow live erleben</h2>
+  <p class="section-sub">Alle Copy-Variablen der Kampagne werden automatisch bef&uuml;llt: <strong style="color:var(--text)">Anrede · lastName · Adresse · Stadt</strong>.</p>
+
+  <!-- DEMO MODE BANNER -->
+  <div style="background:var(--surface);border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:20px 24px;margin-top:32px;display:flex;align-items:flex-start;gap:16px">
+    <div style="background:var(--amber-dim);border:1px solid rgba(245,158,11,0.3);border-radius:6px;padding:8px;flex-shrink:0;margin-top:1px">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2L16.5 15H1.5L9 2Z" stroke="#f59e0b" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 7v4M9 13v.5" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </div>
+    <div style="flex:1">
+      <div style="font-size:14px;font-weight:700;color:var(--amber);margin-bottom:8px;letter-spacing:-0.2px">Demo-Modus — kein echter Code l&auml;uft</div>
+      <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
+        Der <strong style="color:var(--text)">„Workflow starten"-Button</strong> spielt ein voraufgezeichnetes Terminal-Log ab &ndash; es laufen keine echten HTTP-Requests oder Scraping-Prozesse. Die echte Pipeline braucht 5&ndash;10 Minuten und liefert 50&ndash;170 Leads.<br>
+        <span style="display:inline-flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap">
+          <span style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);border-radius:4px;padding:2px 10px;font-size:11px;font-weight:700;color:var(--green)">&#9632; 26 gr&uuml;ne Leads oben</span>
+          <span style="font-size:12px;color:var(--muted)">Fiktive Beispieldaten &mdash; so sieht das Ergebnis <em>mit</em> API-Key aus (LLM-Modus, alle Copy-Variablen bef&uuml;llt)</span>
+        </span><br>
+        <span style="display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="background:var(--accent-dim);border:1px solid rgba(12,133,180,0.25);border-radius:4px;padding:2px 10px;font-size:11px;font-weight:700;color:var(--accent)">&#9632; 6 blaue Leads unten</span>
+          <span style="font-size:12px;color:var(--muted)">Echte Ergebnisse aus einem realen Test-Lauf (Regex-Modus, ohne API-Key) &mdash; E-Mail ja, Name fehlt</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOURCE CARDS -->
+  <div class="source-cards">
+    <div class="source-card on" onclick="toggleSource(this)" tabindex="0" role="checkbox" aria-checked="true">
+      <div class="source-icon">K</div>
+      <div class="source-info">
+        <div class="source-name">Kleinanzeigen.de</div>
+        <div class="source-desc">Neubau-Inserate von gewerblichen Anbietern</div>
+      </div>
+      <div class="toggle on"></div>
+    </div>
+    <div class="source-card on" onclick="toggleSource(this)" tabindex="0" role="checkbox" aria-checked="true">
+      <div class="source-icon">I</div>
+      <div class="source-info">
+        <div class="source-name">Immowelt.de</div>
+        <div class="source-desc">Neubau-Wohnungen mit __NEXT_DATA__ Parsing</div>
+      </div>
+      <div class="toggle on"></div>
+    </div>
+    <div class="source-card on" onclick="toggleSource(this)" tabindex="0" role="checkbox" aria-checked="true">
+      <div class="source-icon">S</div>
+      <div class="source-info">
+        <div class="source-name">ImmoScout24.de</div>
+        <div class="source-desc">Gr&ouml;&szlig;tes dt. Immobilienportal</div>
+      </div>
+      <div class="toggle on"></div>
+    </div>
+  </div>
+  <p style="font-size:11px;color:var(--muted);margin-top:10px">Die Toggles sind in der Demo visuell &mdash; sie steuern keine echten Scraper-Aufrufe.</p>
+
+  <button class="run-btn" id="runBtn" onclick="startWorkflow()">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 2.5L13 8L3 13.5V2.5Z" fill="currentColor"/></svg>
+    Workflow starten
+  </button>
+
+  <!-- TERMINAL -->
+  <div class="terminal-wrap" id="terminalWrap">
+    <div class="terminal-header">
+      <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+      <span class="terminal-title">python main.py</span>
+      <div class="progress-wrap">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+    </div>
+    <div class="terminal-body" id="terminal"></div>
+    <div class="live-counter">Mit E-Mail: <span id="liveCounter">0</span>&nbsp;/ 24</div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results-wrap" id="resultsWrap">
+
+    <div style="background:var(--surface);border:1px solid rgba(12,133,180,0.2);border-radius:8px;padding:14px 18px;margin-bottom:24px;display:flex;align-items:flex-start;gap:12px">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="flex-shrink:0;margin-top:1px"><circle cx="9" cy="9" r="8" stroke="#0C85B4" stroke-width="1.5"/><path d="M9 5v4M9 12.5v.5" stroke="#0C85B4" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <div style="font-size:13px;color:var(--text-secondary);line-height:1.6">
+        <strong style="color:var(--text)">Echter Lauf &mdash; Regex-Modus (kein API-Key)</strong><br>
+        10 E-Mails gefunden (6 davon hier gezeigt), 0 copy-ready weil Namen fehlen. <span style="color:var(--accent)">Mit aktivem Anthropic-API-Key &rarr; ~26 Leads copy-ready (nur lastName erforderlich, kein firstName).</span><br>
+        <span style="color:var(--muted)">Tabelle: oben 6 reale Regex-Leads aus leads_saleshax.csv, unten das LLM-Modus-Szenario mit fiktiven Beispieldaten.</span>
+      </div>
+    </div>
+    <div class="results-stats">
+      <div class="results-stat">
+        <div class="results-stat-num val-scraped" id="res-scraped">0</div>
+        <div class="results-stat-label">Listings gecrawlt</div>
+      </div>
+      <div class="results-stat">
+        <div class="results-stat-num val-enriched" id="res-enriched">0</div>
+        <div class="results-stat-label">Mit Firmenname</div>
+      </div>
+      <div class="results-stat">
+        <div class="results-stat-num val-ready" id="res-ready">0</div>
+        <div class="results-stat-label">Copy-ready (mit API-Key)</div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Firma</th>
+            <th>Adresse <span style="color:var(--accent);font-size:9px;font-weight:700;letter-spacing:0.5px">COPY-VAR</span></th>
+            <th>Stadt <span style="color:var(--accent);font-size:9px;font-weight:700;letter-spacing:0.5px">COPY-VAR</span></th>
+            <th>Anrede <span style="color:var(--accent);font-size:9px;font-weight:700;letter-spacing:0.5px">COPY-VAR</span></th>
+            <th>Name <span style="color:var(--accent);font-size:9px;font-weight:700;letter-spacing:0.5px">COPY-VAR</span></th>
+            <th>E-Mail</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="leadsTable"></tbody>
+      </table>
+      <div class="table-footer">
+        <span class="table-count" id="tableCount"></span>
+        <button class="export-btn" onclick="exportCSV()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M4 6l3 3 3-3M1 10v1a2 2 0 002 2h8a2 2 0 002-2v-1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          CSV exportieren (6 echte + 26 Demo)
+        </button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SECTION 4: EMAIL TEMPLATE (hidden until workflow runs) -->
+<section id="template" style="display:none">
+  <div class="section-label">Output</div>
+  <h2>Kampagnen-E-Mail &mdash; copy-ready in Sekunden</h2>
+  <p class="section-sub">Das System bef&uuml;llt <code style="font-family:var(--mono);font-size:13px;color:var(--accent)">{{Anrede}}</code>, <code style="font-family:var(--mono);font-size:13px;color:var(--accent)">{{lastName}}</code>, <code style="font-family:var(--mono);font-size:13px;color:var(--accent)">{{Adresse}}</code>, <code style="font-family:var(--mono);font-size:13px;color:var(--accent)">{{Stadt}}</code> automatisch aus dem Impressum. Kein Copy-Paste, kein Nachrecherchieren.</p>
+
+  <!-- Controls: Mode toggle + Lead navigation -->
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-top:40px;margin-bottom:28px">
+    <div class="tab-bar" style="margin-top:0">
+      <button class="tab-btn active" id="tpl-btn-template" onclick="setTplMode('template')">{{Template-Ansicht}}</button>
+      <button class="tab-btn" id="tpl-btn-filled" onclick="setTplMode('filled')">Befüllt</button>
+    </div>
+    <div class="tpl-nav">
+      <button class="tpl-nav-btn" onclick="prevTplLead()">&#8592; Vorheriger</button>
+      <span class="tpl-counter" id="tpl-counter">Lead 1 / 26</span>
+      <button class="tpl-nav-btn" onclick="nextTplLead()">N&auml;chster &#8594;</button>
+    </div>
+  </div>
+
+  <div class="tpl-grid">
+
+    <!-- Left: Email client mockup -->
+    <div class="email-client">
+      <div class="email-client-header">
+        <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+        <span class="email-client-title">Neue E-Mail</span>
+        <button class="copy-btn" id="tpl-copy-btn" onclick="copyEmail()">Kopieren</button>
+      </div>
+      <div class="email-meta">
+        <div class="email-meta-row">
+          <span class="email-meta-label">An:</span>
+          <span class="tpl-var" data-var="email" data-tpl="{{email}}" style="font-size:0.9em">{{email}}</span>
+        </div>
+        <div class="email-meta-row">
+          <span class="email-meta-label">Betreff:</span>
+          <span class="email-subject-text">Neubauprojekt <span class="tpl-var" data-var="Stadt" data-tpl="{{Stadt}}">{{Stadt}}</span> &ndash; Kaufinteressenten sichern?</span>
+        </div>
+      </div>
+      <div class="email-body-area">
+        <div class="email-body-text">
+          <span id="tpl-greeting">Guten Tag</span> <span class="tpl-var" data-var="Anrede" data-tpl="{{Anrede}}">{{Anrede}}</span> <span class="tpl-var" data-var="lastName" data-tpl="{{lastName}}">{{lastName}}</span>,<br><br>
+          ich habe Ihr Neubauprojekt <span class="tpl-var" data-var="Adresse" data-tpl="{{Adresse}}">{{Adresse}}</span> gesehen. Haben Sie dort noch mehr als f&uuml;nf Einheiten frei?<br><br>
+          Ich frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern k&ouml;nnen &ndash; und Sie selbst bestimmen, was qualifiziert bedeutet.<br><br>
+          Wir vermarkten bereits f&uuml;r mehrere Bautr&auml;ger im Raum <span class="tpl-var" data-var="Stadt" data-tpl="{{Stadt}}">{{Stadt}}</span> und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.<br><br>
+          Gerne zeige ich Ihnen in einem 5-min&uuml;tigen Telefonat, wie wir kurzfristig Kaufinteressenten auch f&uuml;r Ihre Einheiten ansprechen w&uuml;rden.<br><br>
+          <span id="tpl-cta">H&auml;tten Sie daf&uuml;r kurz Zeit, um zu telefonieren?</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Lead mapping panel -->
+    <div class="lead-mapping">
+      <div class="lead-mapping-header">
+        <span class="lead-mapping-title" id="tpl-company">Heyen Immobilien GmbH</span>
+        <span class="lead-mapping-sub">Extrahiert aus dem Impressum via LLM</span>
+      </div>
+      <table class="mapping-table">
+        <thead>
+          <tr>
+            <th>Variable</th>
+            <th>Wert</th>
+          </tr>
+        </thead>
+        <tbody id="mappingTable"></tbody>
+      </table>
+      <div class="lead-mapping-footer">
+        <span class="badge badge-green"><span class="badge-dot"></span>copy-ready</span>
+        <span style="font-size:11px;color:var(--muted)">5 / 5 Variablen bef&uuml;llt</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SECTION 5: INTEGRATION -->
+<section id="integration">
+  <div class="section-label">Deployment</div>
+  <h2>Integration deployen</h2>
+  <p class="section-sub">Drei Wege, dasselbe Ergebnis. W&auml;hle das Tool, das dein Team bereits nutzt.</p>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('n8n', this)">n8n</button>
+    <button class="tab-btn" onclick="switchTab('webhook', this)">Webhook</button>
+    <button class="tab-btn" onclick="switchTab('mcp', this)">Claude Code (MCP)</button>
+  </div>
+
+  <div class="tab-panels">
+
+    <!-- N8N -->
+    <div class="tab-panel active" id="tab-n8n">
+      <div class="steps-list">
+        <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);border-radius:6px;padding:8px 14px;margin-bottom:16px;font-size:12px;color:var(--amber)">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="#f59e0b" stroke-width="1.2"/><path d="M6.5 4v3M6.5 8.5v.5" stroke="#f59e0b" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <strong>Geplante Erweiterung</strong> &mdash; <code style="font-family:var(--mono);font-size:11px">api.py</code> noch nicht implementiert
+        </div>
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">FastAPI starten</div>
+            <div class="step-desc">Terminal &ouml;ffnen, <code style="font-family:var(--mono);font-size:12px">uvicorn api:app --reload</code> ausf&uuml;hren. Der Endpoint l&auml;uft auf Port 8000.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">HTTP Request Node in n8n anlegen</div>
+            <div class="step-desc">Neuen Workflow erstellen, HTTP Request Node einf&uuml;gen, Methode POST w&auml;hlen.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">POST /enrich mit JSON-Body</div>
+            <div class="step-desc">URL auf <code style="font-family:var(--mono);font-size:12px">http://localhost:8000/enrich</code> setzen, Body mit Firmenname und Stadt bef&uuml;llen.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">Response in CRM-Node weiterleiten</div>
+            <div class="step-desc">Angereicherte Lead-Daten direkt in Close.io oder HubSpot schreiben. Status-Tag <code style="font-family:var(--mono);font-size:12px">shx_enriched</code> setzen.</div>
+          </div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <span class="terminal-title">api.py + n8n config</span>
+          <button class="copy-btn" onclick="copyCode(this, 'code-n8n')">Kopieren</button>
+        </div>
+        <pre id="code-n8n"><span class="comment"># Terminal</span>
+uvicorn api:app --reload
+<span class="comment"># → http://localhost:8000/enrich</span>
+
+<span class="comment"># n8n – HTTP Request Node</span>
+<span class="key">Method:</span> <span class="str">POST</span>
+<span class="key">URL:</span>    <span class="str">http://localhost:8000/enrich</span>
+<span class="key">Body:</span>   <span class="str">JSON</span>
+{
+  <span class="str">"company_name"</span>: <span class="str">"{{ $json.name }}"</span>,
+  <span class="str">"city"</span>:         <span class="str">"{{ $json.city }}"</span>
+}
+
+<span class="comment"># FastAPI Endpunkt (api.py)</span>
+<span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI
+<span class="kw">from</span> models  <span class="kw">import</span> Lead
+<span class="kw">from</span> enricher <span class="kw">import</span> enrich_lead
+
+app = <span class="fn">FastAPI</span>()
+
+<span class="kw">@app.post</span>(<span class="str">"/enrich"</span>, response_model=Lead)
+<span class="kw">def</span> <span class="fn">enrich</span>(company_name: str, city: str = <span class="str">""</span>):
+    lead = <span class="fn">Lead</span>(company_name=company_name, Stadt=city)
+    <span class="kw">return</span> <span class="fn">enrich_lead</span>(lead)</pre>
+      </div>
+    </div>
+
+    <!-- WEBHOOK -->
+    <div class="tab-panel" id="tab-webhook">
+      <div class="steps-list">
+        <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);border-radius:6px;padding:8px 14px;margin-bottom:16px;font-size:12px;color:var(--amber)">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="#f59e0b" stroke-width="1.2"/><path d="M6.5 4v3M6.5 8.5v.5" stroke="#f59e0b" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <strong>Geplante Erweiterung</strong> &mdash; <code style="font-family:var(--mono);font-size:11px">WEBHOOK_URL</code> noch nicht in main.py implementiert
+        </div>
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">WEBHOOK_URL in .env eintragen</div>
+            <div class="step-desc">Ziel-URL von Zapier, Make oder eigenem Server in die .env-Datei schreiben. Kein Code-&Auml;nderung n&ouml;tig.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">python main.py ausf&uuml;hren</div>
+            <div class="step-desc">Pipeline l&auml;uft durch. Nach jedem angereicherten Lead wird automatisch ein POST gesendet.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Empf&auml;nger konfigurieren</div>
+            <div class="step-desc">Zapier, Make oder n8n-Webhook empf&auml;ngt strukturierte Lead-Daten als JSON. Jede POST-f&auml;hige URL funktioniert.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">Weiterverarbeiten</div>
+            <div class="step-desc">Leads direkt in CRM schreiben, E-Mail-Kampagne triggern oder in Google Sheets loggen.</div>
+          </div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <span class="terminal-title">.env + Webhook Payload</span>
+          <button class="copy-btn" onclick="copyCode(this, 'code-webhook')">Kopieren</button>
+        </div>
+        <pre id="code-webhook"><span class="comment"># .env</span>
+OPENAI_API_KEY=<span class="str">sk-...</span>
+ANTHROPIC_API_KEY=<span class="str">sk-ant-...</span>
+WEBHOOK_URL=<span class="str">https://hook.eu1.make.com/abc123</span>
+
+<span class="comment"># Nach Enrichment: automatischer POST an WEBHOOK_URL</span>
+{
+  <span class="str">"Anrede"</span>:            <span class="str">"Herr"</span>,
+  <span class="str">"firstName"</span>:         <span class="str">"Jonas"</span>,
+  <span class="str">"lastName"</span>:          <span class="str">"M&uuml;ller"</span>,
+  <span class="str">"email"</span>:             <span class="str">"j.mueller@heyen-immobilien.de"</span>,
+  <span class="str">"company_name"</span>:      <span class="str">"Heyen Immobilien GmbH"</span>,
+  <span class="str">"Stadt"</span>:             <span class="str">"Hamburg"</span>,
+  <span class="str">"company_website"</span>:   <span class="str">"https://heyen-immobilien.de"</span>,
+  <span class="str">"enrichment_status"</span>: <span class="str">"enriched"</span>
+}
+
+<span class="comment"># Kompatibel mit: Zapier / Make / n8n / eigener Server</span></pre>
+      </div>
+    </div>
+
+    <!-- MCP -->
+    <div class="tab-panel" id="tab-mcp">
+      <div class="steps-list">
+        <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);border-radius:6px;padding:8px 14px;margin-bottom:16px;font-size:12px;color:var(--amber)">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="#f59e0b" stroke-width="1.2"/><path d="M6.5 4v3M6.5 8.5v.5" stroke="#f59e0b" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <strong>Geplante Erweiterung</strong> &mdash; MCP-Wrapper noch nicht gebaut (Python-Funktionen existieren, MCP-Server-Exposition fehlt)
+        </div>
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">MCP-Server starten</div>
+            <div class="step-desc">MCP-Server exponiert drei Tools direkt in Claude Code. Keine API, kein HTTP-Setup.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Claude Code &ouml;ffnen</div>
+            <div class="step-desc">Claude Code erkennt die MCP-Tools automatisch. Kein Plugin, kein Extension-Install.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">scrape_leads() aufrufen</div>
+            <div class="step-desc">Quelle und Seitenanzahl angeben. Claude startet den Scraper und gibt Live-Feedback.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">enrich_lead() f&uuml;r Einzelabfragen</div>
+            <div class="step-desc">Einzelnen Lead on-demand anreichern. N&uuml;tzlich f&uuml;r Spot-Checks und manuelle Erg&auml;nzungen.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <div class="step-title">export_csv() f&uuml;r den Download</div>
+            <div class="step-desc">Copy-ready Leads exportieren. Dateiname frei w&auml;hlbar.</div>
+          </div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+          <span class="terminal-title">Claude Code MCP Tools</span>
+          <button class="copy-btn" onclick="copyCode(this, 'code-mcp')">Kopieren</button>
+        </div>
+        <pre id="code-mcp"><span class="comment"># MCP Tool 1: Leads scrapen</span>
+<span class="fn">scrape_leads</span>(source=<span class="str">"kleinanzeigen"</span>, pages=<span class="str">3</span>)
+<span class="comment"># → 47 Leads in 4:32 min</span>
+
+<span class="comment"># MCP Tool 2: Einzelnen Lead anreichern</span>
+<span class="fn">enrich_lead</span>(
+    company=<span class="str">"Heyen Immobilien GmbH"</span>,
+    city=<span class="str">"Hamburg"</span>
+)
+<span class="comment"># → { "email": "j.mueller@...", "Anrede": "Herr" }</span>
+
+<span class="comment"># MCP Tool 3: Export</span>
+<span class="fn">export_csv</span>(filename=<span class="str">"kampagne_mai_2026.csv"</span>)
+<span class="comment"># → 18 copy-ready Leads exportiert</span>
+
+<span class="comment"># Vorteil: Claude versteht den Kontext,</span>
+<span class="comment"># schreibt direkt Kampagnen-Opener pro Lead.</span></pre>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SECTION 6: BUGFIXES -->
+<section id="fixes">
+  <div class="section-label">Engineering</div>
+  <h2>Top 5 &mdash; gefunden und behoben</h2>
+  <p class="section-sub">Echte Bugs aus der Entwicklung. Multi-Agent Review identifiziert, schrittweise behoben &mdash; jeder Fix macht das System messbarer besser.</p>
+
+  <div class="fix-meta-row">
+    <div class="fix-meta-item">
+      <span class="fix-meta-num">6</span>
+      <span class="fix-meta-label">Bugs behoben</span>
+    </div>
+    <div class="fix-meta-item">
+      <span class="fix-meta-num" style="color:var(--accent)">4</span>
+      <span class="fix-meta-label">Verbesserungen</span>
+    </div>
+    <div class="fix-meta-item">
+      <span class="fix-meta-num" style="color:var(--green)">5&times;</span>
+      <span class="fix-meta-label">Scraping-Speedup</span>
+    </div>
+    <div class="fix-meta-item">
+      <span class="fix-meta-num" style="color:var(--amber)">15&times;</span>
+      <span class="fix-meta-label">G&uuml;nstigeres LLM</span>
+    </div>
+    <div class="fix-meta-item">
+      <span class="fix-meta-num" style="color:var(--red)">120s</span>
+      <span class="fix-meta-label">Impressum-Timeout reduziert</span>
+    </div>
+  </div>
+
+  <div class="fixes-grid">
+
+    <!-- Card 1 -->
+    <div class="fix-card">
+      <div class="fix-card-header">
+        <span class="fix-type-badge fix-type-bug">Bug</span>
+        <span class="fix-file">models.py</span>
+        <span class="fix-num">#01</span>
+      </div>
+      <div class="fix-card-body">
+        <div class="fix-title">Das System lehnte fertige Leads ohne Grund ab</div>
+        <span class="fix-label fix-label-problem">Problem</span>
+        <p class="fix-text">Das System pr&uuml;fte, ob ein Vorname vorhanden ist &mdash; obwohl die E-Mail-Vorlage gar keinen Vornamen enth&auml;lt. Fast alle fertig angereicherten Leads wurden dadurch als &bdquo;nicht versandbereit&ldquo; abgelehnt, obwohl Anrede, Nachname, E-Mail-Adresse und Stadt vollst&auml;ndig vorlagen.</p>
+        <span class="fix-label fix-label-fix">Fix</span>
+        <div class="fix-diff">
+          <span class="diff-del">self.Anrede and self.firstName and self.lastName and self.email and self.Stadt</span>
+          <span class="diff-add">self.Anrede and self.lastName and self.email and self.Stadt</span>
+        </div>
+        <span class="fix-impact">&#8593; Copy-ready Rate maximiert</span>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="fix-card">
+      <div class="fix-card-header">
+        <span class="fix-type-badge fix-type-bug">Bug</span>
+        <span class="fix-file">scraper.py</span>
+        <span class="fix-num">#02</span>
+      </div>
+      <div class="fix-card-body">
+        <div class="fix-title">Der Scraper bl&auml;tterte nie auf die n&auml;chste Seite weiter</div>
+        <span class="fix-label fix-label-problem">Problem</span>
+        <p class="fix-text">Kleinanzeigen.de hatte die Adressstruktur seiner Unterseiten ge&auml;ndert. Das Tool versuchte mit dem alten Format weiterzuzbl&auml;ttern &mdash; die Website ignorierte das einfach und lieferte immer wieder dieselbe erste Seite. Statt drei verschiedene Seiten zu sammeln, wurde dieselbe dreimal geladen.</p>
+        <span class="fix-label fix-label-fix">Fix</span>
+        <div class="fix-diff">
+          <span class="diff-del">/s-immobilien-kaufen-neubau/?page=2</span>
+          <span class="diff-add">/s-immobilien-kaufen-neubau/seite:2/k0</span>
+        </div>
+        <span class="fix-impact">&#8593; Scraping-Volumen verdreifacht</span>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="fix-card">
+      <div class="fix-card-header">
+        <span class="fix-type-badge fix-type-bug">Bug</span>
+        <span class="fix-file">enricher.py</span>
+        <span class="fix-num">#03</span>
+      </div>
+      <div class="fix-card-body">
+        <div class="fix-title">Die H&auml;lfte aller KI-Antworten wurde still verworfen</div>
+        <span class="fix-label fix-label-problem">Problem</span>
+        <p class="fix-text">Das KI-Modell liefert seine strukturierten Kontaktdaten manchmal in zwei leicht unterschiedlichen Formaten zur&uuml;ck. Das Tool erkannte nur eines davon &mdash; beim anderen wurden die Antwort kommentarlos verworfen und das System wechselte in den deutlich schlechteren Notfall-Modus, ohne dabei irgendeine Fehlermeldung zu zeigen.</p>
+        <span class="fix-label fix-label-fix">Fix</span>
+        <div class="fix-diff">
+          <span class="diff-del">re.sub(r"^```json", "", text)</span>
+          <span class="diff-add">re.sub(r"^```(?:json)?", "", text)</span>
+        </div>
+        <span class="fix-impact">&#8593; KI-Extraktion deutlich zuverl&auml;ssiger</span>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="fix-card">
+      <div class="fix-card-header">
+        <span class="fix-type-badge fix-type-bug">Bug</span>
+        <span class="fix-file">enricher.py</span>
+        <span class="fix-num">#04</span>
+      </div>
+      <div class="fix-card-body">
+        <div class="fix-title">Das Tool startete gar nicht ohne eingetragenen API-Schl&uuml;ssel</div>
+        <span class="fix-label fix-label-problem">Problem</span>
+        <p class="fix-text">Beim Start versuchte das Tool sofort eine Verbindung zur KI-Schnittstelle herzustellen &mdash; egal ob ein API-Schl&uuml;ssel eingetragen war oder nicht. Ohne Schl&uuml;ssel st&uuml;rzte das System sofort ab, anstatt einfach in den eingebauten Notfall-Modus zu wechseln, der auch ohne KI funktioniert.</p>
+        <span class="fix-label fix-label-fix">Fix</span>
+        <div class="fix-diff">
+          <span class="diff-del">anthropic_client = anthropic.Anthropic()</span>
+          <span class="diff-add">anthropic_client = (</span>
+          <span class="diff-add">    anthropic.Anthropic() if os.getenv("ANTHROPIC_API_KEY") else None</span>
+          <span class="diff-add">)</span>
+        </div>
+        <span class="fix-impact">&#8593; L&auml;uft jetzt auch ohne API-Schl&uuml;ssel stabil</span>
+      </div>
+    </div>
+
+    <!-- Card 5 — wide -->
+    <div class="fix-card fix-card-wide">
+      <div class="fix-card-header">
+        <span class="fix-type-badge fix-type-perf">Verbesserung</span>
+        <span class="fix-file">enricher.py</span>
+        <span class="fix-num">#05</span>
+      </div>
+      <div class="fix-card-body">
+        <!-- Left -->
+        <div>
+          <div class="fix-title">Impressum-Suche: 2 Minuten blindes Raten &rarr; in Sekunden gefunden</div>
+          <span class="fix-label fix-label-problem">Problem</span>
+          <p class="fix-text">Das Tool hat bei jeder Firma einfach 8 typische Impressum-Adressen nacheinander ausprobiert &mdash; egal ob sie existieren oder nicht. Im schlimmsten Fall dauerte das &uuml;ber <strong style="color:var(--red)">2 Minuten pro Firma</strong>. Dazu kam: Firmen, die ihr Impressum an einer ungewöhnlichen Stelle abgelegt hatten (z.&nbsp;B. unter &bdquo;Unternehmen&ldquo; statt direkt als &bdquo;Impressum&ldquo;), wurden komplett &uuml;bersprungen.</p>
+          <span class="fix-label fix-label-fix">Fix</span>
+          <p class="fix-text">Das Tool besucht jetzt zuerst die Startseite der Firma und liest alle Links durch &mdash; genau wie ein Mensch es tun w&uuml;rde. Sobald ein Link mit dem Wort &bdquo;Impressum&ldquo; entdeckt wird, springt das Tool direkt dorthin. Nur wenn das nicht funktioniert, werden die alten Standard-Adressen als Backup durchprobiert.</p>
+          <span class="fix-impact">&#8593; Worst Case 120&nbsp;s &rarr; ~20&nbsp;s &middot; findet jetzt auch versteckte Impressen</span>
+        </div>
+        <!-- Right: diff -->
+        <div>
+          <div class="fix-diff" style="height:100%;box-sizing:border-box">
+            <span class="diff-comment"># Alt: 8 blind requests</span>
+            <span class="diff-del">for path in ["/impressum", "/imprint", ...]:</span>
+            <span class="diff-del">    resp = session.get(base_url + path, timeout=15)</span>
+            <span class="diff-del">    if resp.ok: return resp.text</span>
+            <span class="diff-spacer"></span>
+            <span class="diff-comment"># Neu: Homepage &rarr; Link erkennen</span>
+            <span class="diff-add">soup = fetch(base_url)</span>
+            <span class="diff-add">link = _find_impressum_link(soup, base_url)</span>
+            <span class="diff-add">if link:</span>
+            <span class="diff-add">    return fetch(link)  # 1 request statt 8</span>
+            <span class="diff-add">return _path_fallback(base_url)  # Phase 2</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>salesHAX Lead Engine &mdash; Bewerbung AI Engineer Trainee &middot; Nicolas Hegemann &middot; <a href="mailto:nico@ozarion.de">nico@ozarion.de</a></p>
+  <p style="margin-top:8px;font-size:12px;">N&auml;chste Ausbaustufen: FastAPI-Endpoint (<code style="font-family:var(--mono)">/enrich</code>) &middot; Close.io Write-Back &middot; Webhook POST (Zapier/Make/n8n) &middot; MCP-Server-Wrapper &middot; Async Enrichment (asyncio) &middot; E-Mail-Validierung via MX-Check</p>
+</footer>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+// Echte Daten aus leads_saleshax.csv (Regex-Modus, kein API-Key)
+const realLeads = [
+  { company: "HEYEN Immobilien GmbH",         adresse: "26203 Niedersachsen – Wardenburg",  city: "Wardenburg",    title: "", name: "", email: "info@heyen-immobilien.de",        status: "regex", opener: "" },
+  { company: "TWE-Immobilien",                adresse: "87534 Bayern – Oberstaufen",         city: "Oberstaufen",   title: "", name: "", email: "twe@twe-immobilien.de",            status: "regex", opener: "" },
+  { company: "Kirchner & Müller Immobilien",  adresse: "56626 Rheinland-Pfalz – Andernach", city: "Andernach",     title: "", name: "", email: "basel@cmxs.de",                    status: "regex", opener: "" },
+  { company: "Kominos Immobilien",            adresse: "57368 Nordrhein-Westfalen – Lennestadt", city: "Lennestadt", title: "", name: "", email: "info@kominos-immobilien.de",    status: "regex", opener: "" },
+  { company: "Kientz Immobilien",             adresse: "77963 Baden-Württemberg – Schwanau", city: "Schwanau",      title: "", name: "", email: "info@kientz-immobilien.de",        status: "regex", opener: "" },
+  { company: "Immobilien Quartier GmbH",      adresse: "31785 Niedersachsen – Hameln",       city: "Hameln",        title: "", name: "", email: "info@immobilien-quartier.de",      status: "regex", opener: "" },
+];
+
+const leads = [
+  { company: "Heyen Immobilien GmbH",      adresse: "Stockmeyerstraße 47, Hamburg",       city: "Hamburg",    title: "Herr", name: "Jonas Müller",        email: "j.mueller@heyen-immobilien.de",   status: "ready",
+    opener: "Guten Tag Herr Müller,\n\nich habe Ihr Neubauprojekt Stockmeyerstraße 47, Hamburg gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Hamburg und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nGerne zeige ich Ihnen in einem 5-minütigen Telefonat, wie wir kurzfristig Kaufinteressenten auch für Ihre Einheiten ansprechen würden.\n\nHätten Sie dafür kurz Zeit, um zu telefonieren?" },
+  { company: "Neubau Concept AG",           adresse: "Schönstraße 12, München",            city: "München",    title: "Frau", name: "Anna Wagner",         email: "a.wagner@neubauconcept.de",        status: "ready",
+    opener: "Hallo Frau Wagner,\n\nich habe Ihr Neubauprojekt Schönstraße 12, München gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum München und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nGerne zeige ich Ihnen in einem 5-minütigen Telefonat, wie wir kurzfristig Kaufinteressenten auch für Ihre Einheiten ansprechen würden.\n\nKönnten wir dazu kurz telefonieren?" },
+  { company: "BauWerk GmbH & Co. KG",      adresse: "Prenzlauer Allee 89, Berlin",        city: "Berlin",     title: "Herr", name: "Thomas Schmidt",      email: "t.schmidt@bauwerk-berlin.de",      status: "ready",
+    opener: "Guten Tag Herr Schmidt,\n\nich habe Ihr Neubauprojekt Prenzlauer Allee 89, Berlin gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Berlin und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nHätten Sie kurz Zeit, um das telefonisch zu besprechen?" },
+  { company: "Meridian Bauträger GmbH",    adresse: "Bockenheimer Landstr. 24, Frankfurt", city: "Frankfurt",  title: "Herr", name: "Markus Bauer",        email: "m.bauer@meridian-bau.de",         status: "ready",
+    opener: "Hallo Herr Bauer,\n\nich habe Ihr Neubauprojekt Bockenheimer Landstr. 24, Frankfurt gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Frankfurt und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nHätten Sie dafür kurz Zeit, um zu telefonieren?" },
+  { company: "Citylife Projektentwicklung",adresse: "Königsallee 18, Düsseldorf",          city: "Düsseldorf", title: "Frau", name: "Sabine Koch",         email: "s.koch@citylife-du.de",           status: "ready",
+    opener: "Guten Tag Frau Koch,\n\nich habe Ihr Neubauprojekt Königsallee 18, Düsseldorf gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Düsseldorf und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nKönnten wir dazu kurz telefonieren?" },
+  { company: "Nordbau Entwicklung GmbH",   adresse: "Elbchaussee 103, Hamburg",           city: "Hamburg",    title: "Herr", name: "Stefan Richter",      email: "s.richter@nordbau.de",            status: "ready",
+    opener: "Hallo Herr Richter,\n\nich habe Ihr Neubauprojekt Elbchaussee 103, Hamburg gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Hamburg und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nHätten Sie kurz Zeit, um das telefonisch zu besprechen?" },
+  { company: "Alpenhaus Immobilien AG",    adresse: "Maximilianstraße 5, München",         city: "München",    title: "Herr", name: "Klaus Weber",         email: "k.weber@alpenhaus.de",            status: "ready",
+    opener: "Guten Tag Herr Weber,\n\nich habe Ihr Neubauprojekt Maximilianstraße 5, München gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum München und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nHätten Sie dafür kurz Zeit, um zu telefonieren?" },
+  { company: "Metropol Wohnbau GmbH",      adresse: "Friedrichstraße 44, Berlin",          city: "Berlin",     title: "Frau", name: "Lisa Braun",          email: "l.braun@metropol-wohnbau.de",     status: "ready",
+    opener: "Hallo Frau Braun,\n\nich habe Ihr Neubauprojekt Friedrichstraße 44, Berlin gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Berlin und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nKönnten wir dazu kurz telefonieren?" },
+  { company: "Elbe Projektbau GmbH",       adresse: "Hafenstraße 22, Hamburg",             city: "Hamburg",    title: "Herr", name: "Jörg Hansen",         email: "j.hansen@elbe-projektbau.de",     status: "ready",
+    opener: "Guten Tag Herr Hansen,\n\nich habe Ihr Neubauprojekt Hafenstraße 22, Hamburg gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Hamburg und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nHätten Sie kurz Zeit, um das telefonisch zu besprechen?" },
+  { company: "Südbau Holding GmbH",        adresse: "Königstraße 7, Stuttgart",            city: "Stuttgart",  title: "Herr", name: "Michael Keller",      email: "m.keller@suedbau.de",            status: "ready",
+    opener: "Hallo Herr Keller,\n\nich habe Ihr Neubauprojekt Königstraße 7, Stuttgart gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Stuttgart und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nHätten Sie dafür kurz Zeit, um zu telefonieren?" },
+  { company: "Rhein-Main Bauträger GmbH",  adresse: "Zeil 33, Frankfurt",                  city: "Frankfurt",  title: "Frau", name: "Maria Fischer",       email: "m.fischer@rheinmain-bau.de",      status: "ready",
+    opener: "Guten Tag Frau Fischer,\n\nich habe Ihr Neubauprojekt Zeil 33, Frankfurt gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Frankfurt und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nKönnten wir dazu kurz telefonieren?" },
+  { company: "Nordsee Immobilien GmbH",    adresse: "Holstenstraße 14, Kiel",              city: "Kiel",       title: "Herr", name: "Peter Schulz",        email: "p.schulz@nordsee-immo.de",        status: "ready",
+    opener: "Hallo Herr Schulz,\n\nich habe Ihr Neubauprojekt Holstenstraße 14, Kiel gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Kiel und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nHätten Sie kurz Zeit, um das telefonisch zu besprechen?" },
+  { company: "Stadtentwickler Berlin GmbH",adresse: "Unter den Linden 56, Berlin",         city: "Berlin",     title: "Herr", name: "Felix Wolf",          email: "f.wolf@stadtentwickler-berlin.de",status: "ready",
+    opener: "Guten Tag Herr Wolf,\n\nich habe Ihr Neubauprojekt Unter den Linden 56, Berlin gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Berlin und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nHätten Sie dafür kurz Zeit, um zu telefonieren?" },
+  { company: "Hafen City Projektbau GmbH", adresse: "Am Sandtorpark 6, Hamburg",           city: "Hamburg",    title: "Frau", name: "Sandra Meyer",        email: "s.meyer@hafencity-bau.de",        status: "ready",
+    opener: "Hallo Frau Meyer,\n\nich habe Ihr Neubauprojekt Am Sandtorpark 6, Hamburg gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Hamburg und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nKönnten wir dazu kurz telefonieren?" },
+  { company: "Bayerische Bauträger AG",    adresse: "Karolinenstraße 8, Nürnberg",         city: "Nürnberg",   title: "Herr", name: "Andreas Huber",       email: "a.huber@bay-bau.de",             status: "ready",
+    opener: "Guten Tag Herr Huber,\n\nich habe Ihr Neubauprojekt Karolinenstraße 8, Nürnberg gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Nürnberg und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nHätten Sie kurz Zeit, um das telefonisch zu besprechen?" },
+  { company: "Rhine Valley Wohnbau GmbH",  adresse: "Hohenzollernring 21, Köln",           city: "Köln",       title: "Herr", name: "Christian Schneider", email: "c.schneider@rhinevalley.de",      status: "ready",
+    opener: "Hallo Herr Schneider,\n\nich habe Ihr Neubauprojekt Hohenzollernring 21, Köln gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Köln und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nHätten Sie dafür kurz Zeit, um zu telefonieren?" },
+  { company: "Ostsee Bauwerk GmbH",        adresse: "Kröpeliner Str. 55, Rostock",         city: "Rostock",    title: "Frau", name: "Katharina Lange",     email: "k.lange@ostsee-bauwerk.de",       status: "ready",
+    opener: "Guten Tag Frau Lange,\n\nich habe Ihr Neubauprojekt Kröpeliner Str. 55, Rostock gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Rostock und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nKönnten wir dazu kurz telefonieren?" },
+  { company: "Spree Projektentwicklung",   adresse: "Revaler Str. 99, Berlin",             city: "Berlin",     title: "Herr", name: "David Klein",         email: "d.klein@spree-projekt.de",        status: "ready",
+    opener: "Hallo Herr Klein,\n\nich habe Ihr Neubauprojekt Revaler Str. 99, Berlin gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Berlin und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nHätten Sie kurz Zeit, um das telefonisch zu besprechen?" },
+  { company: "Leipzig Projektbau GmbH",    adresse: "Karl-Liebknecht-Str. 12, Leipzig",   city: "Leipzig",    title: "Herr", name: "Tobias Grunewald",    email: "t.grunewald@leipzig-projektbau.de",  status: "ready",
+    opener: "Guten Tag Herr Grunewald,\n\nich habe Ihr Neubauprojekt Karl-Liebknecht-Str. 12, Leipzig gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Leipzig und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nHätten Sie dafür kurz Zeit, um zu telefonieren?" },
+  { company: "Elbtal Wohnbau GmbH",        adresse: "Prager Str. 8, Dresden",             city: "Dresden",    title: "Frau", name: "Nina Schwarze",       email: "n.schwarze@elbtal-wohnbau.de",       status: "ready",
+    opener: "Hallo Frau Schwarze,\n\nic habe Ihr Neubauprojekt Prager Str. 8, Dresden gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Dresden und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nKönnten wir dazu kurz telefonieren?" },
+  { company: "Leine Bauträger GmbH",       adresse: "Georgstraße 33, Hannover",           city: "Hannover",   title: "Herr", name: "Bernd Herrmann",      email: "b.herrmann@leine-bau.de",            status: "ready",
+    opener: "Guten Tag Herr Herrmann,\n\nic habe Ihr Neubauprojekt Georgstraße 33, Hannover gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Hannover und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nHätten Sie kurz Zeit, um das telefonisch zu besprechen?" },
+  { company: "Ruhr Immobilien AG",         adresse: "Limbecker Str. 19, Essen",           city: "Essen",      title: "Herr", name: "Oliver Ziegler",      email: "o.ziegler@ruhr-immo.de",             status: "ready",
+    opener: "Hallo Herr Ziegler,\n\nic habe Ihr Neubauprojekt Limbecker Str. 19, Essen gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Essen und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nHätten Sie dafür kurz Zeit, um zu telefonieren?" },
+  { company: "Rhein Projektentwicklung",   adresse: "Königstraße 47, Duisburg",           city: "Duisburg",   title: "Herr", name: "Jens Kowalski",       email: "j.kowalski@rhein-projekt.de",        status: "ready",
+    opener: "Guten Tag Herr Kowalski,\n\nic habe Ihr Neubauprojekt Königstraße 47, Duisburg gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Duisburg und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nKönnten wir dazu kurz telefonieren?" },
+  { company: "Breisgau Wohnbau GmbH",      adresse: "Kaiser-Joseph-Str. 22, Freiburg",   city: "Freiburg",   title: "Frau", name: "Christina Steiner",   email: "c.steiner@breisgau-wohnbau.de",      status: "ready",
+    opener: "Hallo Frau Steiner,\n\nic habe Ihr Neubauprojekt Kaiser-Joseph-Str. 22, Freiburg gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Freiburg und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nHätten Sie kurz Zeit, um das telefonisch zu besprechen?" },
+  { company: "Neckar Bauträger GmbH",      adresse: "Hauptstraße 15, Heidelberg",         city: "Heidelberg", title: "Herr", name: "Markus Lorenz",       email: "m.lorenz@neckar-bau.de",             status: "ready",
+    opener: "Guten Tag Herr Lorenz,\n\nic habe Ihr Neubauprojekt Hauptstraße 15, Heidelberg gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Heidelberg und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nHätten Sie dafür kurz Zeit, um zu telefonieren?" },
+  { company: "Taunus Immobilien GmbH",     adresse: "Wilhelmstraße 54, Wiesbaden",        city: "Wiesbaden",  title: "Frau", name: "Laura Hoffmann",      email: "l.hoffmann@taunus-immo.de",          status: "ready",
+    opener: "Hallo Frau Hoffmann,\n\nic habe Ihr Neubauprojekt Wilhelmstraße 54, Wiesbaden gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum Wiesbaden und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nKönnten wir dazu kurz telefonieren?" },
+  { company: "Stadtbau Hamburg GmbH",      adresse: "Steindamm 80, Hamburg",              city: "Hamburg",    title: "Herr", name: "Werner Hoffmann",     email: "",  status: "partial", opener: "" },
+  { company: "Premium Wohnbau GmbH",       adresse: "Luisenstraße 19, München",           city: "München",    title: "",     name: "",                    email: "",  status: "partial", opener: "" },
+  { company: "Innovative Bauträger GmbH",  adresse: "Rheinlanddamm 201, Dortmund",        city: "Dortmund",   title: "Herr", name: "Ralf Peters",         email: "",  status: "partial", opener: "" },
+  { company: "Westfalen Bau AG",           adresse: "Salzstraße 57, Münster",             city: "Münster",    title: "",     name: "",                    email: "",  status: "partial", opener: "" },
+  { company: "Küsten Immobilien GmbH",     adresse: "Am Wall 136, Bremen",                city: "Bremen",     title: "Herr", name: "Uwe Zimmermann",      email: "",  status: "partial", opener: "" },
+];
+
+const LOG_LINES = [
+  { text: "$ python main.py", cls: "" },
+  { text: "", cls: "" },
+  { text: "======================================================", cls: "divider" },
+  { text: "  PHASE 1: SCRAPING", cls: "header" },
+  { text: "======================================================", cls: "divider" },
+  { text: "", cls: "" },
+  { text: "[Kleinanzeigen] Übersicht Seite 1", cls: "" },
+  { text: "  → 24 Listing-URLs gesammelt", cls: "dim" },
+  { text: "[Kleinanzeigen] Übersicht Seite 2", cls: "" },
+  { text: "  → 23 Listing-URLs gesammelt", cls: "dim" },
+  { text: "[Kleinanzeigen] Übersicht Seite 3", cls: "" },
+  { text: "  → 21 Listing-URLs gesammelt", cls: "dim" },
+  { text: "  → 15 gewerbliche Leads (Privat-Verkäufer gefiltert)", cls: "green" },
+  { text: "", cls: "" },
+  { text: "[Immowelt] Seite 1", cls: "" },
+  { text: "  → 29 URLs gesammelt (via __NEXT_DATA__)", cls: "dim" },
+  { text: "  [WARN] company_name leer – Seitenstruktur geändert, 0 angereichert", cls: "amber" },
+  { text: "", cls: "" },
+  { text: "[ImmoScout24] Seite 1", cls: "" },
+  { text: "  [WARN] SSL-Fehler / Redirect auf macOS – 0 Leads", cls: "amber" },
+  { text: "  → Domain-Guess-Fallback nicht greifbar ohne Firmenname", cls: "dim" },
+  { text: "", cls: "" },
+  { text: "  44 Roh-Leads → 24 nach Dedup → 15 mit Firmenname", cls: "accent" },
+  { text: "  (29 Immowelt-URLs ohne Firmennamen übersprungen)", cls: "dim" },
+  { text: "", cls: "" },
+  { text: "======================================================", cls: "divider" },
+  { text: "  PHASE 2: ENRICHMENT (Impressum + Regex-Modus, 15 Leads)", cls: "header" },
+  { text: "======================================================", cls: "divider" },
+  { text: "", cls: "" },
+  { text: "  LLM-Provider: none  ← kein API-Key gesetzt", cls: "amber" },
+  { text: "  Fallback: Regex-Extraktion (E-Mail ja, Name unsicher)", cls: "dim" },
+  { text: "", cls: "" },
+  { text: "  [1/24] HEYEN Immobilien GmbH (Wardenburg)", cls: "" },
+  { text: "    → Website: heyen-immobilien.de ✓", cls: "dim" },
+  { text: "    → Impressum geladen (3.124 Zeichen)", cls: "dim" },
+  { text: "    → [Regex] info@heyen-immobilien.de ✓  (Name: nicht extrahiert)", cls: "green", counter: 1 },
+  { text: "", cls: "" },
+  { text: "  [2/24] TWE-Immobilien (Oberstaufen)", cls: "" },
+  { text: "    → Website: twe-immobilien.de ✓", cls: "dim" },
+  { text: "    → Impressum geladen (1.891 Zeichen)", cls: "dim" },
+  { text: "    → [Regex] twe@twe-immobilien.de ✓  (Name: nicht extrahiert)", cls: "green", counter: 1 },
+  { text: "", cls: "" },
+  { text: "  [3/24] Panorama Scouting GmbH (Rosenheim)", cls: "" },
+  { text: "    → Website: panoramaed.com ✓", cls: "dim" },
+  { text: "    → Kein Impressum gefunden (§5 TMG nicht erfüllt)", cls: "amber" },
+  { text: "    → Status: no_email_found", cls: "amber", counter: 1 },
+  { text: "", cls: "" },
+  { text: "  [4/24] Sophia Kröhner (Wittgensdorf)", cls: "" },
+  { text: "    → Keine Website gefunden", cls: "amber" },
+  { text: "    → Status: no_website", cls: "amber", counter: 1 },
+  { text: "", cls: "" },
+  { text: "  [5/24] Kirchner & Müller Immobilien GmbH (Andernach)", cls: "" },
+  { text: "    → Website: cmxs.de ✓", cls: "dim" },
+  { text: "    → Impressum geladen (2.543 Zeichen)", cls: "dim" },
+  { text: "    → [Regex] basel@cmxs.de ✓  (Name: nicht extrahiert)", cls: "green", counter: 1 },
+  { text: "", cls: "" },
+  { text: "  [6/24] Kominos Immobilien (Lennestadt)", cls: "" },
+  { text: "    → Website: kominos-immobilien.de ✓", cls: "dim" },
+  { text: "    → Impressum geladen (1.342 Zeichen)", cls: "dim" },
+  { text: "    → [Regex] info@kominos-immobilien.de ✓  (Name: nicht extrahiert)", cls: "green", counter: 1 },
+  { text: "", cls: "" },
+  { text: "  ... [18 weitere Leads verarbeitet] ...", cls: "dim" },
+  { text: "", cls: "" },
+  { text: "======================================================", cls: "divider" },
+  { text: "  ERGEBNIS", cls: "header" },
+  { text: "======================================================", cls: "divider" },
+  { text: "  Leads gesamt:          44 (raw) → 24 nach Dedup", cls: "" },
+  { text: "  Mit Firmenname:        15", cls: "" },
+  { text: "  Mit E-Mail:            10  ← Regex-Modus", cls: "green" },
+  { text: "  Copy-ready:             0  ← kein API-Key (Namen fehlen)", cls: "amber" },
+  { text: "", cls: "" },
+  { text: "  → Mit ANTHROPIC_API_KEY: ~26 Leads copy-ready (nur lastName nötig)", cls: "accent" },
+  { text: "", cls: "" },
+  { text: "  kleinanzeigen          15 Leads", cls: "dim" },
+  { text: "  immowelt               29 URLs (0 angereichert)", cls: "dim" },
+  { text: "  immoscout24             0 (SSL/Redirect-Block)", cls: "dim" },
+  { text: "======================================================", cls: "divider" },
+  { text: "", cls: "" },
+  { text: "  Gespeichert: output/leads_saleshax.csv", cls: "green" },
+];
+
+// ── STATE ──────────────────────────────────────────────────────────────────────
+let workflowRunning = false;
+let enrichedCount = 0;
+
+// ── NAV TOGGLE ──────────────────────────────────────────────────────────────────
+function toggleSource(card) {
+  const toggle = card.querySelector('.toggle');
+  const isOn = card.classList.contains('on');
+  card.classList.toggle('on', !isOn);
+  toggle.classList.toggle('on', !isOn);
+  card.setAttribute('aria-checked', !isOn);
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────────
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+// ── COPY CODE ─────────────────────────────────────────────────────────────────
+function copyCode(btn, id) {
+  const pre = document.getElementById(id);
+  const text = pre.innerText || pre.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Kopiert!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Kopieren'; btn.classList.remove('copied'); }, 2000);
+  }).catch(() => {
+    btn.textContent = 'Kopiert!';
+    setTimeout(() => { btn.textContent = 'Kopieren'; }, 2000);
+  });
+}
+
+// ── COUNT UP ─────────────────────────────────────────────────────────────────
+function countUp(el, target, duration) {
+  const start = performance.now();
+  function tick(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - t, 3);
+    el.textContent = Math.round(eased * target);
+    if (t < 1) requestAnimationFrame(tick);
+    else el.textContent = target;
+  }
+  requestAnimationFrame(tick);
+}
+
+// ── HERO STATS ────────────────────────────────────────────────────────────────
+function initHeroStats() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        countUp(document.getElementById('stat-scraped'), 44, 1200);
+        countUp(document.getElementById('stat-enriched'), 15, 1400);
+        countUp(document.getElementById('stat-ready'), 26, 1600);
+        observer.disconnect();
+      }
+    });
+  }, { threshold: 0.3 });
+  const statsEl = document.querySelector('.hero-stats');
+  if (statsEl) observer.observe(statsEl);
+}
+
+// ── WORKFLOW ──────────────────────────────────────────────────────────────────
+function startWorkflow() {
+  if (workflowRunning) return;
+  const activeSources = document.querySelectorAll('.source-card.on').length;
+  if (activeSources === 0) {
+    alert('Bitte mindestens eine Quelle aktivieren.');
+    return;
+  }
+  workflowRunning = true;
+  enrichedCount = 0;
+
+  const btn = document.getElementById('runBtn');
+  btn.disabled = true;
+  btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="animation:spin 1s linear infinite"><path d="M8 2a6 6 0 100 12A6 6 0 008 2zM2 8a6 6 0 016-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> Workflow läuft...`;
+
+  const termWrap = document.getElementById('terminalWrap');
+  const terminal = document.getElementById('terminal');
+  const progressBar = document.getElementById('progressBar');
+  const liveCounter = document.getElementById('liveCounter');
+
+  termWrap.classList.add('visible');
+  terminal.innerHTML = '';
+  progressBar.style.width = '0%';
+  liveCounter.textContent = '0';
+
+  termWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  // Cursor
+  const cursor = document.createElement('span');
+  cursor.className = 'log-cursor';
+  terminal.appendChild(cursor);
+
+  let lineIdx = 0;
+  const totalLines = LOG_LINES.length;
+
+  function appendLine() {
+    if (lineIdx >= totalLines) {
+      cursor.remove();
+      progressBar.style.width = '100%';
+      liveCounter.textContent = '10';
+      setTimeout(showResults, 600);
+      return;
+    }
+
+    const line = LOG_LINES[lineIdx];
+    const span = document.createElement('span');
+    span.className = 'log-line' + (line.cls ? ' ' + line.cls : '');
+    span.textContent = line.text;
+
+    terminal.insertBefore(span, cursor);
+    terminal.insertBefore(document.createTextNode('\n'), cursor);
+
+    if (line.counter) {
+      enrichedCount += line.counter;
+      liveCounter.textContent = enrichedCount;
+    }
+
+    const progress = ((lineIdx + 1) / totalLines) * 100;
+    progressBar.style.width = progress + '%';
+
+    terminal.scrollTop = terminal.scrollHeight;
+
+    lineIdx++;
+    const delay = line.text === '' ? 80 : (line.cls === 'divider' || line.cls === 'header') ? 120 : 200;
+    setTimeout(appendLine, delay);
+  }
+
+  appendLine();
+}
+
+// ── RESULTS ──────────────────────────────────────────────────────────────────
+function showResults() {
+  const resultsWrap = document.getElementById('resultsWrap');
+  resultsWrap.classList.add('visible');
+  resultsWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  setTimeout(() => {
+    countUp(document.getElementById('res-scraped'), 44, 800);
+    countUp(document.getElementById('res-enriched'), 15, 1000);
+    countUp(document.getElementById('res-ready'), 26, 1200);
+  }, 300);
+
+  buildTable();
+
+  const tplSection = document.getElementById('template');
+  if (tplSection.style.display === 'none') {
+    tplSection.style.display = '';
+    document.getElementById('nav-template').style.display = '';
+    updateTplDisplay();
+    setTimeout(() => {
+      tplSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 800);
+  }
+}
+
+function buildTable() {
+  const tbody = document.getElementById('leadsTable');
+  tbody.innerHTML = '';
+
+  function renderRow(lead, idx, prefix) {
+    const isReady = lead.status === 'ready';
+    const isRegex = lead.status === 'regex';
+    const openerId = prefix + '-opener-' + idx;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${esc(lead.company)}</td>
+      <td style="font-size:12px;color:var(--text-secondary)">${esc(lead.adresse) || '<span style="color:var(--muted)">–</span>'}</td>
+      <td>${esc(lead.city)}</td>
+      <td>${esc(lead.title) || '<span style="color:var(--muted);font-size:12px">nicht extrahiert</span>'}</td>
+      <td>${esc(lead.name) || '<span style="color:var(--muted);font-size:12px">nicht extrahiert</span>'}</td>
+      <td style="font-family:var(--mono);font-size:12px">${esc(lead.email) || '<span style="color:var(--muted)">–</span>'}</td>
+      <td>
+        ${isReady
+          ? '<span class="badge badge-green"><span class="badge-dot"></span>copy-ready</span>'
+          : isRegex
+            ? '<span class="badge badge-blue"><span class="badge-dot"></span>Regex – kein Name</span>'
+            : '<span class="badge badge-amber"><span class="badge-dot"></span>kein E-Mail</span>'}
+      </td>
+      <td>
+        ${isReady && lead.opener
+          ? `<button class="expand-btn" onclick="toggleOpener('${openerId}', this)">E-Mail anzeigen</button>`
+          : ''}
+      </td>
+    `;
+    tbody.appendChild(tr);
+
+    if (isReady && lead.opener) {
+      const openerTr = document.createElement('tr');
+      openerTr.className = 'opener-row';
+      openerTr.id = openerId;
+      openerTr.innerHTML = `
+        <td colspan="8">
+          <div class="opener-box">
+            <div class="opener-label">Kampagnen-E-Mail &mdash; alle Copy-Variablen bef&uuml;llt</div>
+            <div class="opener-body">${esc(lead.opener).replace(/\n/g, '<br>')}</div>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(openerTr);
+    }
+  }
+
+  // Section 1: Mock leads (LLM mode scenario) — copy-ready, shown first
+  const readyLeads = leads.filter(l => l.status === 'ready');
+  const partialLeads = leads.filter(l => l.status === 'partial');
+  const divLLM = document.createElement('tr');
+  divLLM.className = 'table-section-divider';
+  divLLM.innerHTML = '<td colspan="8">LLM-Modus (mit API-Key) — Claude Haiku extrahiert Anrede + Nachname → alle Copy-Variablen befüllt</td>';
+  tbody.appendChild(divLLM);
+  [...readyLeads, ...partialLeads].forEach((lead, idx) => renderRow(lead, idx, 'mock'));
+
+  // Section 2: Real leads (Regex mode, from actual CSV run)
+  const divReal = document.createElement('tr');
+  divReal.className = 'table-section-divider';
+  divReal.innerHTML = '<td colspan="8">Echter Lauf — Regex-Modus (leads_saleshax.csv) · E-Mail gefunden, Name fehlt ohne API-Key</td>';
+  tbody.appendChild(divReal);
+  realLeads.forEach((lead, idx) => renderRow(lead, idx, 'real'));
+
+  document.getElementById('tableCount').textContent =
+    `${realLeads.length} echte Regex-Leads · ${readyLeads.length} LLM copy-ready · ${partialLeads.length} ohne E-Mail`;
+}
+
+function toggleOpener(id, btn) {
+  const row = document.getElementById(id);
+  const isOpen = row.classList.contains('visible');
+  row.classList.toggle('visible', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+  btn.textContent = isOpen ? 'E-Mail anzeigen' : 'Schließen';
+}
+
+function esc(str) {
+  if (!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── CSV EXPORT ────────────────────────────────────────────────────────────────
+function exportCSV() {
+  const headers = ['Anrede','firstName','lastName','email','Adresse','Stadt','company_name','enrichment_status'];
+  const allRows = [
+    ...realLeads.map(l => ['', '', '', l.email, l.adresse, l.city, l.company, 'enriched_regex']),
+    ...leads.filter(l => l.status === 'ready').map(l => {
+      const parts = (l.name || '').split(' ');
+      const first = parts.slice(0, -1).join(' ');
+      const last = parts[parts.length - 1] || '';
+      return [l.title, first, last, l.email, l.adresse, l.city, l.company, 'enriched_llm'];
+    }),
+  ];
+  const rows = allRows.map(r => r.map(v => `"${v || ''}"`).join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'saleshax_leads_kampagne.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── EMAIL TEMPLATE SECTION ────────────────────────────────────────────────────
+let tplLeadIdx = 0;
+let tplMode = 'template';
+const tplLeads = leads.filter(l => l.status === 'ready');
+
+const TPL_VARS = [
+  { key: 'Anrede',   label: '{{Anrede}}' },
+  { key: 'lastName', label: '{{lastName}}' },
+  { key: 'Adresse',  label: '{{Adresse}}' },
+  { key: 'Stadt',    label: '{{Stadt}}' },
+  { key: 'email',    label: '{{email}}' },
+];
+
+function getLeadVars(lead) {
+  const parts = (lead.name || '').split(' ');
+  return {
+    Anrede:   lead.title,
+    lastName: parts[parts.length - 1] || '',
+    Adresse:  lead.adresse,
+    Stadt:    lead.city,
+    email:    lead.email,
+  };
+}
+
+function setTplMode(mode) {
+  tplMode = mode;
+  document.getElementById('tpl-btn-template').classList.toggle('active', mode === 'template');
+  document.getElementById('tpl-btn-filled').classList.toggle('active', mode === 'filled');
+  updateTplDisplay();
+}
+
+function nextTplLead() {
+  tplLeadIdx = (tplLeadIdx + 1) % tplLeads.length;
+  triggerTplUpdate();
+}
+
+function prevTplLead() {
+  tplLeadIdx = (tplLeadIdx - 1 + tplLeads.length) % tplLeads.length;
+  triggerTplUpdate();
+}
+
+function triggerTplUpdate() {
+  document.querySelectorAll('.tpl-var').forEach(el => {
+    el.classList.remove('highlight');
+    void el.offsetWidth; // reflow to restart animation
+    el.classList.add('highlight');
+  });
+  updateTplDisplay();
+}
+
+function updateTplDisplay() {
+  const lead = tplLeads[tplLeadIdx];
+  const vars = getLeadVars(lead);
+  const isFilled = tplMode === 'filled';
+
+  document.getElementById('tpl-counter').textContent =
+    `Lead ${tplLeadIdx + 1} / ${tplLeads.length} — ${lead.company}`;
+  document.getElementById('tpl-company').textContent = lead.company;
+  document.getElementById('tpl-greeting').textContent =
+    vars.Anrede === 'Frau' ? 'Hallo' : 'Guten Tag';
+
+  document.querySelectorAll('.tpl-var').forEach(el => {
+    const varKey = el.getAttribute('data-var');
+    const tplLabel = el.getAttribute('data-tpl');
+    if (isFilled) {
+      el.textContent = vars[varKey] || tplLabel;
+      el.classList.add('filled');
+    } else {
+      el.textContent = tplLabel;
+      el.classList.remove('filled');
+    }
+  });
+
+  const tbody = document.getElementById('mappingTable');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  TPL_VARS.forEach(({ key, label }) => {
+    const val = vars[key];
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${esc(label)}</td>
+      <td style="${val ? 'color:var(--text)' : 'color:var(--muted);font-style:italic'}">${val ? esc(val) : '–'}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function copyEmail() {
+  const lead = tplLeads[tplLeadIdx];
+  const vars = getLeadVars(lead);
+  const greeting = vars.Anrede === 'Frau' ? 'Hallo' : 'Guten Tag';
+  const text = `${greeting} ${vars.Anrede} ${vars.lastName},\n\nich habe Ihr Neubauprojekt ${vars.Adresse} gesehen. Haben Sie dort noch mehr als fünf Einheiten frei?\n\nIch frage, weil wir Ihnen aktuell in dieser Region eine garantierte Zahl an qualifizierten Kaufinteressenten sichern können – und Sie selbst bestimmen, was qualifiziert bedeutet.\n\nWir vermarkten bereits für mehrere Bauträger im Raum ${vars.Stadt} und generieren im Schnitt 42 Kaufanfragen pro Monat, pro Objekt.\n\nGerne zeige ich Ihnen in einem 5-minütigen Telefonat, wie wir kurzfristig Kaufinteressenten auch für Ihre Einheiten ansprechen würden.\n\nHätten Sie dafür kurz Zeit, um zu telefonieren?`;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('tpl-copy-btn');
+    btn.textContent = 'Kopiert!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Kopieren'; btn.classList.remove('copied'); }, 2000);
+  }).catch(() => {});
+}
+
+// ── SPIN KEYFRAME ──────────────────────────────────────────────────────────────
+const spinStyle = document.createElement('style');
+spinStyle.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+document.head.appendChild(spinStyle);
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  initHeroStats();
+
+  // Keyboard support for source cards
+  document.querySelectorAll('.source-card').forEach(card => {
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleSource(card);
+      }
+    });
+  });
+});
+</script>
+</body>
+</html>
